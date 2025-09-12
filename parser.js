@@ -47,6 +47,20 @@ function parseMetaOpengraph() {
 
 // Разбор данных product
 function parseProduct() {
+  let price = +document
+    .querySelector("div .price")
+    .firstChild.textContent.replace(/[^0-9]/g, "");
+  let oldPrice = +document
+    .querySelector("div .price")
+    .lastElementChild.textContent.replace(/[^0-9]/g, "");
+  let discount = oldPrice - price;
+  let discountPercent = (discount / oldPrice) * 100;
+  let currencyIn = document
+    .querySelector("div .price")
+    .firstChild.nodeValue.replace(/[0-9]+/g, "")
+    .trim();
+  console.log(currencyIn);
+
   return {
     id: document.querySelector(".product").dataset.id,
     name: document.querySelector("h1").textContent,
@@ -54,26 +68,16 @@ function parseProduct() {
       .querySelector("figure button")
       .classList.contains("active"),
     tags: parseProductTags(),
+    price: price,
+    oldPrice: oldPrice,
+    discount: discount,
+    discountPercent: discountPercent + "%",
+    currency: parseProductCurrency(currencyIn),
+    properties: parseProductProperties(),
   };
 }
 
 // "product": {
-//     "tags": {
-//       "category": [
-//         "tag1"
-//       ],
-//       "discount": [
-//         "tag3"
-//       ],
-//       "label": [
-//         "tag2"
-//       ]
-//     },
-//     "price": 50,
-//     "oldPrice": 80,
-//     "discount": 30,
-//     "discountPercent": "37.50%",
-//     "currency": "RUB",
 //     "properties": {
 //       "key1": "value1",
 //       "key2": "value2",
@@ -131,7 +135,25 @@ function parseProductTags() {
   return { category: category, discount: discount, label: label };
 }
 
-function parseProductProperties() {}
+function parseProductCurrency(currencyIn) {
+  if (currencyIn === "₽") {
+    return "RUB";
+  }
+  if (currencyIn === "$") {
+    return "USD";
+  }
+  if (currencyIn === "€") {
+    return "€";
+  }
+}
+
+function parseProductProperties() {
+  return {
+    key1: "value1",
+    key2: "value2",
+    key3: "value3",
+  };
+}
 
 function parseProductiImages() {}
 
