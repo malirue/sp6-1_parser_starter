@@ -46,9 +46,90 @@ function parseMetaOpengraph() {
 }
 
 // Разбор данных product
-function parseProduct() {}
+function parseProduct() {
+  return {
+    id: document.querySelector(".product").dataset.id,
+    name: document.querySelector("h1").textContent,
+    isLiked: document
+      .querySelector("figure button")
+      .classList.contains("active"),
+    tags: parseProductTags(),
+  };
+}
 
-function parseProductTags() {}
+// "product": {
+//     "tags": {
+//       "category": [
+//         "tag1"
+//       ],
+//       "discount": [
+//         "tag3"
+//       ],
+//       "label": [
+//         "tag2"
+//       ]
+//     },
+//     "price": 50,
+//     "oldPrice": 80,
+//     "discount": 30,
+//     "discountPercent": "37.50%",
+//     "currency": "RUB",
+//     "properties": {
+//       "key1": "value1",
+//       "key2": "value2",
+//       "key3": "value3"
+//     },
+//     "description": "<h3>Title</h3>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>",
+//     "images": [
+//       {
+//         "preview": "https://placehold.co/92x66?text=1",
+//         "full": "https://placehold.co/600?text=1",
+//         "alt": "slide1"
+//       },
+//       {
+//         "preview": "https://placehold.co/92x66?text=2",
+//         "full": "https://placehold.co/600?text=2",
+//         "alt": "slide2"
+//       },
+//       {
+//         "preview": "https://placehold.co/92x66?text=3",
+//         "full": "https://placehold.co/600?text=3",
+//         "alt": "slide3"
+//       },
+//       {
+//         "preview": "https://placehold.co/92x66?text=4",
+//         "full": "https://placehold.co/600?text=4",
+//         "alt": "slide4"
+//       },
+//       {
+//         "preview": "https://placehold.co/92x66?text=5",
+//         "full": "https://placehold.co/600?text=5",
+//         "alt": "slide5"
+//       }
+//     ]
+//   },
+
+function parseProductTags() {
+  let category = [];
+  let discount = [];
+  let label = [];
+
+  let tags = document.querySelectorAll(".tags span");
+
+  tags.forEach((tag) => {
+    if (tag.classList.contains("green") === true) {
+      category.push(tag.textContent);
+    }
+    if (tag.classList.contains("blue") === true) {
+      label.push(tag.textContent);
+    }
+    if (tag.classList.contains("red") === true) {
+      discount.push(tag.textContent);
+    }
+  });
+  //Добавить очищение от лишних пробелов для tag.textContent через отдельную функцию
+  return { category: category, discount: discount, label: label };
+}
 
 function parseProductProperties() {}
 
@@ -66,7 +147,7 @@ function parseReviews() {}
 function parsePage() {
   return {
     meta: parseMeta(),
-    product: {},
+    product: parseProduct(),
     suggested: [],
     reviews: [],
   };
