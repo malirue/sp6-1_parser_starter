@@ -59,7 +59,6 @@ function parseProduct() {
     .querySelector("div .price")
     .firstChild.nodeValue.replace(/[0-9]+/g, "")
     .trim();
-  console.log(currencyIn);
 
   return {
     id: document.querySelector(".product").dataset.id,
@@ -74,44 +73,12 @@ function parseProduct() {
     discountPercent: discountPercent + "%",
     currency: parseProductCurrency(currencyIn),
     properties: parseProductProperties(),
+    description: document.querySelector("div.description").textContent,
+    images: parseProductiImages(),
   };
 }
 
-// "product": {
-//     "properties": {
-//       "key1": "value1",
-//       "key2": "value2",
-//       "key3": "value3"
-//     },
-//     "description": "<h3>Title</h3>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>\n                <p>Answer the freaquently asked question in a simple sentence, a longish paragraph, or even in a list.</p>",
-//     "images": [
-//       {
-//         "preview": "https://placehold.co/92x66?text=1",
-//         "full": "https://placehold.co/600?text=1",
-//         "alt": "slide1"
-//       },
-//       {
-//         "preview": "https://placehold.co/92x66?text=2",
-//         "full": "https://placehold.co/600?text=2",
-//         "alt": "slide2"
-//       },
-//       {
-//         "preview": "https://placehold.co/92x66?text=3",
-//         "full": "https://placehold.co/600?text=3",
-//         "alt": "slide3"
-//       },
-//       {
-//         "preview": "https://placehold.co/92x66?text=4",
-//         "full": "https://placehold.co/600?text=4",
-//         "alt": "slide4"
-//       },
-//       {
-//         "preview": "https://placehold.co/92x66?text=5",
-//         "full": "https://placehold.co/600?text=5",
-//         "alt": "slide5"
-//       }
-//     ]
-//   },
+//    ,
 
 function parseProductTags() {
   let category = [];
@@ -148,14 +115,33 @@ function parseProductCurrency(currencyIn) {
 }
 
 function parseProductProperties() {
-  return {
-    key1: "value1",
-    key2: "value2",
-    key3: "value3",
-  };
+  let liItems = document.querySelectorAll("ul.properties li");
+  let data = {};
+  liItems.forEach((item) => {
+    let spans = item.querySelectorAll("span");
+
+    //Переделать
+    let key = spans[0].textContent.trim();
+    let value = spans[1].textContent.trim();
+
+    data[key] = value;
+  });
+  return { properties: data };
 }
 
-function parseProductiImages() {}
+function parseProductiImages() {
+  let imgItems = document.querySelectorAll("nav button img");
+  let data = [];
+
+  imgItems.forEach((img) => {
+    let preview = img.getAttribute("src");
+    let full = img.getAttribute("data-src");
+    let alt = img.getAttribute("alt");
+    let obj = { preview: preview, full: full, alt: alt };
+    data.push(obj);
+  });
+  return data;
+}
 
 // Разбор данных suggested
 // ------побочные функции ещё не определила
