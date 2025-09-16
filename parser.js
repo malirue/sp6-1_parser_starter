@@ -12,8 +12,10 @@ function splitAndClean(str, symbol) {
 
 // Разбор данных meta
 function parseMeta() {
+  let title = document.querySelector("title").textContent;
+  let splitTitle = splitAndClean(title, "—");
   return {
-    title: document.querySelector("title").textContent,
+    title: splitTitle[0],
     description: document
       .querySelector("meta[name='description']")
       .getAttribute("content"),
@@ -87,10 +89,10 @@ function parseProduct() {
     price: price,
     oldPrice: oldPrice,
     discount: discount,
-    discountPercent: discountPercent + "%",
+    discountPercent: discountPercent.toFixed(2) + "%",
     currency: currency(currencyIn),
     properties: parseProductProperties(),
-    description: document.querySelector("div.description").textContent,
+    description: document.querySelector("div.description").innerHTML.replace(/\s+class=["'][^"']+["']\s?/g, '').trim(),
     images: parseProductiImages(),
   };
 }
@@ -131,7 +133,7 @@ function parseProductProperties() {
 
     data[key] = value;
   });
-  return { properties: data };
+  return data;
 }
 
 function parseProductiImages() {
@@ -164,7 +166,7 @@ function parseSuggested() {
       name: article.querySelector("h3").textContent,
       description: article.querySelector("p").textContent,
       image: article.querySelector("img").getAttribute("src"),
-      price: +article.querySelector("b").textContent.replace(/[^0-9]/g, ""),
+      price: article.querySelector("b").textContent.replace(/[^0-9]/g, ""),
       currency: currency(currencyIn),
     };
     suggested.push(prod);
