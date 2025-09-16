@@ -23,6 +23,23 @@ function parseMeta() {
   };
 }
 
+/**
+ * Функция для определения валюты
+ * @param {*} currencyIn
+ * @returns
+ */
+function currency(currencyIn) {
+  if (currencyIn === "₽") {
+    return "RUB";
+  }
+  if (currencyIn === "$") {
+    return "USD";
+  }
+  if (currencyIn === "€") {
+    return "€";
+  }
+}
+
 function parseMetaKeywords() {
   let keywords = document
     .querySelector("meta[name='keywords']")
@@ -71,7 +88,7 @@ function parseProduct() {
     oldPrice: oldPrice,
     discount: discount,
     discountPercent: discountPercent + "%",
-    currency: parseProductCurrency(currencyIn),
+    currency: currency(currencyIn),
     properties: parseProductProperties(),
     description: document.querySelector("div.description").textContent,
     images: parseProductiImages(),
@@ -100,18 +117,6 @@ function parseProductTags() {
   });
   //Добавить очищение от лишних пробелов для tag.textContent через отдельную функцию
   return { category: category, discount: discount, label: label };
-}
-
-function parseProductCurrency(currencyIn) {
-  if (currencyIn === "₽") {
-    return "RUB";
-  }
-  if (currencyIn === "$") {
-    return "USD";
-  }
-  if (currencyIn === "€") {
-    return "€";
-  }
 }
 
 function parseProductProperties() {
@@ -145,7 +150,28 @@ function parseProductiImages() {
 
 // Разбор данных suggested
 // ------побочные функции ещё не определила
-function parseSuggested() {}
+function parseSuggested() {
+  let suggested = [];
+
+  let items = document.querySelectorAll("section.suggested article");
+
+  items.forEach((article) => {
+    let currencyIn = article
+      .querySelector("b")
+      .textContent.replace(/[0-9]+/g, "")
+      .trim();
+
+    let prod = {
+      name: article.querySelector("h3").textContent,
+      description: article.querySelector("p").textContent,
+      image: article.querySelector("img").getAttribute("src"),
+      price: +article.querySelector("b").textContent.replace(/[^0-9]/g, ""),
+      currency: currency(currencyIn),
+    };
+    suggested.push(prod);
+  });
+  return suggested;
+}
 
 // Разбор данных reviews
 // ------побочные функции ещё не определила
@@ -156,7 +182,7 @@ function parsePage() {
   return {
     meta: parseMeta(),
     product: parseProduct(),
-    suggested: [],
+    suggested: parseSuggested(),
     reviews: [],
   };
 }
