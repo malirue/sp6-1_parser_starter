@@ -149,7 +149,6 @@ function parseProductiImages() {
 }
 
 // Разбор данных suggested
-// ------побочные функции ещё не определила
 function parseSuggested() {
   let suggested = [];
 
@@ -174,8 +173,36 @@ function parseSuggested() {
 }
 
 // Разбор данных reviews
-// ------побочные функции ещё не определила
-function parseReviews() {}
+function parseReviews() {
+  let reviews = [];
+
+  let ownReview = document.querySelectorAll("section.reviews article");
+
+  ownReview.forEach((el) => {
+    let author = {
+      avatar: el.querySelector(".author img").getAttribute("src"),
+      name: el.querySelector(".author span").textContent,
+    };
+
+    let date = el.querySelector(".author i").textContent;
+
+    let review = {
+      rating: el.querySelectorAll(".rating span.filled").length,
+      author: author,
+      title: el.querySelector("h3").textContent,
+      description: el.querySelector("p").textContent,
+      date: parseReviewsDate(date),
+    };
+    reviews.push(review);
+  });
+  return reviews;
+}
+
+function parseReviewsDate(date) {
+  let dateParts = date.split("/");
+  let formattedDate = `${dateParts[0]}.${dateParts[1]}.${dateParts[2]}`;
+  return formattedDate;
+}
 
 // Главная функция
 function parsePage() {
@@ -183,7 +210,7 @@ function parsePage() {
     meta: parseMeta(),
     product: parseProduct(),
     suggested: parseSuggested(),
-    reviews: [],
+    reviews: parseReviews(),
   };
 }
 
